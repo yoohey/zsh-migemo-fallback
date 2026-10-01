@@ -6,20 +6,22 @@ zsh で、日本語のファイル名・フォルダー名を、ローマ字の�
 
 ```
 $ ls
-やまびこ.md  山の写真/  山形県.txt  岡山県.txt  都道府県/
-$ cd yama<Tab>        → cd 山の写真/
-$ cat *yama<Tab>      → cat 山形県.txt（名前の途中に「山」があるものも。Tab で次の候補へ）
-$ cat todo<Tab>       → cat 都道府県/
+ドキュメント/  デスクトップ/  議事録/  設計ドキュメント.md  設計書.md  読書メモ.md
+$ cd dokyu<Tab>       → cd ドキュメント/
+$ cd document<Tab>    → cd ドキュメント/（英語のつづりでも合う語がある）
+$ ls *dokyu<Tab>      → ドキュメント/ と 設計ドキュメント.md が候補に（名前の途中にあるものも）
+$ cat doku<Tab>       → cat 読書メモ.md（漢字も読みで合う）
+$ cat 議事録/teire<Tab> → cat 議事録/定例会議.md
 ```
 
-日本語入力に切り替えずに、ローマ字のまま日本語の名前を補完できます。
+日本語入力に切り替えずに、ローマ字のまま日本語の名前を補完できます。たとえば WSL から Windows 側の日本語の名前のフォルダーに入るときや、日本語の名前の資料がたくさんあるフォルダーで使えます。
 
 ## 特徴
 
 - **普通の補完を邪魔しない**: zsh の補完の方法（completer）の最後に1つ足すだけです。普通の補完で何も見つからなかったときだけ動きます。英字の名前の補完は、今までとまったく同じです。
 - **いつもの補完の一覧で選べる**: 候補は、zsh の普通の補完の一覧に出ます。一覧の中の操作（`Tab` で次へ、`menu select` など）も、そのまま使えます。
-- **漢字の読みが複数あっても合う**: migemo の辞書で、ローマ字を「日本語にも合う正規表現」に変えて比べます。「山」なら `yama` でも `san` でも合います。
-- **名前の途中にも合う**: `*yama` のように先頭に `*` を付けると、名前の途中に合うものも出ます（`岡山県.txt` など）。
+- **漢字の読みが複数あっても合う**: migemo の辞書で、ローマ字を「日本語にも合う正規表現」に変えて比べます。「読」なら `doku`（読書）でも `yomi`（読み）でも合います。
+- **名前の途中にも合う**: `*dokyu` のように先頭に `*` を付けると、名前の途中に合うものも出ます（`設計ドキュメント.md` など）。
 - **zsh のスクリプトだけ**: ほかに要るのは `cmigemo` だけです。`brew` や `apt` で入ります。
 
 ### 似たもの
@@ -32,18 +34,21 @@ $ cat todo<Tab>       → cat 都道府県/
 
 ## 必要なもの
 
-- zsh（5.9 で確かめています）と、補完のしくみ（`compinit`）
+- zsh と、補完のしくみ（`compinit`）
 - `cmigemo` と、その辞書
   - Mac（Homebrew）: `brew install cmigemo`
   - Debian・Ubuntu: `sudo apt install cmigemo`
+- 文字コードが UTF-8 の環境（`LANG=ja_JP.UTF-8` など）
 
-辞書は、`cmigemo` の隣（`<cmigemo の場所>/../share/migemo/utf-8/migemo-dict`）と、Debian・Ubuntu の場所（`/usr/share/cmigemo/utf-8/migemo-dict`）から探します。ほかの場所にあるときは、読み込む前に `ZSH_MIGEMO_FALLBACK_DICT` で指定してください。
+辞書は、`cmigemo` の隣（`<cmigemo の場所>/../share/migemo/utf-8/migemo-dict`）、`/usr/share/cmigemo/utf-8/migemo-dict`、`/usr/share/migemo/utf-8/migemo-dict` の順に探します。ほかの場所にあるときは、読み込む前に `ZSH_MIGEMO_FALLBACK_DICT` で指定してください。
 
 ```zsh
 ZSH_MIGEMO_FALLBACK_DICT=/path/to/migemo-dict
 ```
 
-`cmigemo` か辞書が見つからないときは、何もしません（エラーも出しません）。
+`cmigemo` か辞書が見つからないときは、何もしません（エラーも出しません）。`.zshrc` を、cmigemo の無いマシンと共有していても大丈夫です。
+
+確かめた環境: Ubuntu 24.04（WSL2）、zsh 5.9、Homebrew の cmigemo。Mac ではまだ試していません。
 
 ## 入れ方
 
@@ -53,13 +58,15 @@ ZSH_MIGEMO_FALLBACK_DICT=/path/to/migemo-dict
 git clone https://github.com/yoohey/zsh-migemo-fallback ~/.zsh/zsh-migemo-fallback
 ```
 
-`.zshrc` に1行足します。
+`.zshrc` に1行足します（`compinit` の前でも後でもかまいません）。
 
 ```zsh
 source ~/.zsh/zsh-migemo-fallback/zsh-migemo-fallback.plugin.zsh
 ```
 
 ### プラグインの管理ツール
+
+ふつうのプラグインと同じように読み込めるはずです（作者はまだ試していません）。
 
 ```zsh
 # zinit
@@ -74,9 +81,12 @@ Oh My Zsh なら、`$ZSH_CUSTOM/plugins/zsh-migemo-fallback` に clone して、
 
 ### 補完の方法（completer）を自分で設定しているとき
 
-このプラグインは、読み込んだ時点の補完の方法の最後に `_migemo_fallback` を足します（設定が無ければ、zsh の既定の `_complete _ignored` の後ろに）。
+このプラグインは、読み込んだ時点の `zstyle ':completion:*' completer` の最後に `_migemo_fallback` を足します（設定が無ければ、zsh の既定の `_complete _ignored` の後ろに）。
 
-`.zshrc` で、このプラグインを読み込んだ**あとに** `zstyle ':completion:*' completer ...` を書いていると、その行で置き換わって、このプラグインは動きません。その場合は、その行の最後に `_migemo_fallback` を足してください。
+次のときは、このプラグインが足した設定が使われないので、自分の completer の行の最後に `_migemo_fallback` を足してください。
+
+- `.zshrc` で、このプラグインを読み込んだ**あとに** completer の行を書いている
+- `':completion:*'` 以外の書き方（`':completion:::::'` など）で completer を設定している
 
 ```zsh
 zstyle ':completion:*' completer _expand _complete _ignored _migemo_fallback
@@ -86,33 +96,37 @@ zstyle ':completion:*' completer _expand _complete _ignored _migemo_fallback
 
 | 打つもの | 候補 |
 |---|---|
-| `cd yama<Tab>` | 「山」「やま」「ヤマ」などで始まるフォルダー（`cd`・`pushd`・`rmdir` ではフォルダーだけ） |
-| `cat yama<Tab>` | 同じく、ファイルとフォルダー。候補が複数なら1つ目が入り、`Tab` で次へ |
-| `cat *yama<Tab>` | 名前の途中に「山」などがあるもの（`岡山県.txt` も） |
-| `cat 都道府県/touk<Tab>` | フォルダーの中も（フォルダーは1段ずつ補完します） |
-| `ls ~/doc/shiryo<Tab>` | `~` で始まるパスも |
-| `sudo rmdir yama<Tab>`、`--file=yama<Tab>` | `sudo` などの後ろや、`=` の後ろも |
+| `cd dokyu<Tab>` | 「ドキュメント」などで始まるフォルダー（`cd`・`pushd`・`rmdir` ではフォルダーだけ） |
+| `cat sekke<Tab>` | 「設計」などで始まるファイルとフォルダー。候補が複数なら1つ目が入り、`Tab` で次へ |
+| `ls *dokyu<Tab>` | 名前の途中に「ドキュメント」などがあるもの（`設計ドキュメント.md` も） |
+| `cat 議事録/teire<Tab>` | フォルダーの中も（フォルダーは1段ずつ補完します） |
+| `ls ~/desu<Tab>` | `~`・`~ユーザー名` で始まるパスも（`~/デスクトップ/`） |
+| `sudo rmdir giji<Tab>`、`--file=doku<Tab>` | `sudo` などの後ろや、`=` の後ろも |
 
 ## 制限
 
-- **英字の候補が見つかると、日本語の候補は出ません**: 普通の補完で何か見つかったときは動かないためです（`index` と `インデックス` があると、`inde<Tab>` は `index`、`indek<Tab>` で `インデックス`）。
+- **英字の候補が見つかると、日本語の候補は出ません**: 普通の補完で何か見つかったときは動かないためです（`index` と `インデックス` があると、`inde<Tab>` は `index`、`indek<Tab>` で `インデックス`）。`_approximate`・`_correct` など、似た名前を探す completer が前にあって何か見つけたときも同じです。
+- **ファイルを補完しないコマンドでも動きます**: 普通の補完が何も見つけなければ、どのコマンドでも動くので、`ssh doku<Tab>` でも `読書メモ.md` が出ることがあります。
 - ローマ字は2文字以上です（1文字だと、フォルダーの半分くらいが候補になるため）。英字・数字・`-` だけのときに動きます。
 - 行の先頭（コマンドの名前の位置）では動きません。
-- 隠しファイル（`.` で始まるもの）は候補に出しません。
+- 隠しファイル（`.` で始まるもの）と、名前に改行が入っているものは、候補に出しません。
+- `$HOME/...` のように `$変数` で始まるパスでは動きません（`~/...` は動きます）。`cd` で `CDPATH` の中は探しません。
+- 読み飛ばすのは `sudo`・`env`・`command` などの名前と `VAR=値` だけで、`sudo -u user` のようなオプションの付いた形は読み飛ばしません。
+- 文字コードが UTF-8 でないとき（`LANG=C` など）は動きません（日本語の文字を正しく比べられないため）。
 - `Tab` のたびに `cmigemo` を1回動かします（約0.1秒。ほとんどは辞書を読み込む時間）。普通の補完で見つかったときは動かないので、ふだんの補完は遅くなりません。
 
 ## しくみ
 
 1. 普通の補完（`_complete`）で何も見つからないと、zsh が最後の補完の方法として `_migemo_fallback` を呼びます。
-2. 打ったローマ字を `cmigemo -w` で正規表現に変えます（`yama` → `(山|やま|ヤマ|...)` のようなもの）。
+2. 打ったローマ字を `cmigemo -w` で正規表現に変えます（`dokyu` → `(ドキュ|どきゅ|...)` のようなもの）。
 3. そのフォルダーの名前の一覧を、`grep -E` で1回で比べます。
 4. 合った名前を、`compadd -U` で候補にします（打ったローマ字で候補を絞らないように）。候補が複数のときは、打ったローマ字が消えないように、すぐ一覧に入ります。
 
-cmigemo の出力には、辞書の語から来る `{`・`}` がそのまま入ることがあり（`mu`・`ji` など）、そのままでは正規表現として読めないので、`\{`・`\}` に直してから使っています。
+cmigemo の出力には、辞書の語から来る `{`・`}`・`+`・`*`・`?` がそのまま入ることがあり（`mu`・`pl` など）、そのままでは正規表現として読めなかったり、意味が変わったりします。そのため、`\` を付けて文字として扱ってから使っています。
 
 ## 試験
 
-本物の zsh（`compinit` とこのプラグインだけを読み込んだもの）にキーを送って、行の中身を確かめます。`cmigemo` が要ります。
+本物の zsh（`compinit` とこのプラグインだけを読み込んだもの）にキーを送って、行の中身を確かめます。`cmigemo` が要ります（約1分半）。
 
 ```zsh
 ./tests/run.zsh
