@@ -14,6 +14,8 @@ $ cat doku<Tab>       → cat 読書メモ.md（漢字も読みで合う）
 $ cat 議事録/teire<Tab> → cat 議事録/定例会議.md
 ```
 
+![デモ: cd dokyu、cat doku、ls *dokyu、cat 議事録/teire を Tab で補完する様子](demo/demo.gif)
+
 日本語入力に切り替えずに、ローマ字のまま日本語の名前を補完できます。たとえば WSL から Windows 側の日本語の名前のフォルダーに入るときや、日本語の名前の資料がたくさんあるフォルダーで使えます。
 
 ## 特徴
@@ -130,6 +132,14 @@ cmigemo の出力には、辞書の語から来る `{`・`}`・`+`・`*`・`?` �
 
 ```zsh
 ./tests/run.zsh
+```
+
+## デモの GIF の作り直し
+
+[VHS](https://github.com/charmbracelet/vhs) で、台本（`demo/demo.tape`）から作っています。リポジトリの一番上で次を実行すると、`demo/demo.gif` を作り直せます（VHS、cmigemo、フォント UDEV Gothic NF が要ります）。録画には、一時フォルダーに作った日本語の名前のファイルと、このプラグインだけを読み込んだ zsh を使います（`demo/setup.zsh`）。
+
+```zsh
+vhs demo/demo.tape
 ```
 
 ## ライセンス
