@@ -47,7 +47,12 @@ run() {
   done
   sleep 0.3
   while zpty -r -t t chunk 2> /dev/null; do out+=$chunk; done
-  for k in "$@"; do zpty -w -n t "$k"; sleep $KEY_WAIT; done
+  # Read the screen output after each key: the macOS pty holds little, and a candidate list left unread there
+  # stops zsh before it gets the next keys
+  for k in "$@"; do
+    zpty -w -n t "$k"; sleep $KEY_WAIT
+    while zpty -r -t t chunk 2> /dev/null; do out+=$chunk; done
+  done
   zpty -w -n t $'\C-x\C-d'; sleep 0.5
   while zpty -r -t t chunk 2> /dev/null; do out+=$chunk; done
   zpty -d t

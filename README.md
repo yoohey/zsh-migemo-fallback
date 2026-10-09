@@ -50,7 +50,7 @@ ZSH_MIGEMO_FALLBACK_DICT=/path/to/migemo-dict
 
 `cmigemo` か辞書が見つからないときは、何もしません（エラーも出しません）。`.zshrc` を、cmigemo の無いマシンと共有していても大丈夫です。
 
-確かめた環境: Ubuntu 24.04（WSL2）、zsh 5.9、Homebrew の cmigemo。Mac ではまだ試していません。
+確かめた環境: Ubuntu 24.04（WSL2）と macOS 27（Apple シリコン）、zsh 5.9、Homebrew の cmigemo。
 
 ## 入れ方
 
