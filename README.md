@@ -26,20 +26,13 @@ $ cat 議事録/teire<Tab> → cat 議事録/定例会議.md
 - **名前の途中にも合う**: `*dokyu` のように先頭に `*` を付けると、名前の途中に合うものも出ます（`設計ドキュメント.md` など）。
 - **zsh のスクリプトだけ**: ほかに要るのは `cmigemo` だけです。`brew` や `apt` で入ります。
 
-### 似たもの
-
-同じ「ローマ字で日本語の名前を補完する」ものに、次のものがあります。作りが違うので、合うほうを選んでください。
-
-- [aoyama-val/zsh-romaji-complete](https://github.com/aoyama-val/zsh-romaji-complete): kakasi でファイル名をローマ字に変えて比べる zsh プラグインです。
-- [hata48915b/sazae](https://github.com/hata48915b/sazae): migemo を使った補完です（Python）。
-- [nekowasabi/zsh-migemo-completion](https://github.com/nekowasabi/zsh-migemo-completion): sazae を参考にした Go の実装です（辞書を中に入れた1つのプログラム。`fzf` などにつなぐ使い方もできます）。
-
 ## 必要なもの
 
 - zsh と、補完のしくみ（`compinit`）
 - `cmigemo` と、その辞書
   - Mac（Homebrew）: `brew install cmigemo`
   - Debian・Ubuntu: `sudo apt install cmigemo`
+  - NixOS: `nixpkgs#cmigemo`（`environment.systemPackages` や `home.packages` に `cmigemo` を足す）
 - 文字コードが UTF-8 の環境（`LANG=ja_JP.UTF-8` など）
 
 辞書は、`cmigemo` の隣（`<cmigemo の場所>/../share/migemo/utf-8/migemo-dict`）、`/usr/share/cmigemo/utf-8/migemo-dict`、`/usr/share/migemo/utf-8/migemo-dict` の順に探します。ほかの場所にあるときは、読み込む前に `ZSH_MIGEMO_FALLBACK_DICT` で指定してください。
@@ -50,7 +43,7 @@ ZSH_MIGEMO_FALLBACK_DICT=/path/to/migemo-dict
 
 `cmigemo` か辞書が見つからないときは、何もしません（エラーも出しません）。`.zshrc` を、cmigemo の無いマシンと共有していても大丈夫です。
 
-確かめた環境: Ubuntu 24.04（WSL2）と macOS 27（Apple シリコン）、zsh 5.9、Homebrew の cmigemo。
+確かめた環境: Ubuntu 24.04（WSL2）、macOS 27（Apple シリコン）、NixOS 26.05（x86_64）。zsh 5.9、cmigemo は Homebrew・Nix のもの。
 
 ## 入れ方
 
