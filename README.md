@@ -135,6 +135,10 @@ cmigemo の出力には、辞書の語から来る `{`・`}`・`+`・`*`・`?` �
 vhs demo/demo.tape
 ```
 
+## 解説記事
+
+作った理由や、日本語入力の切り替えを減らす工夫の全体（IME を英数に戻す [zsh-ime-reset](https://github.com/yoohey/zsh-ime-reset) も含む）は、Zenn の記事にまとめています: https://zenn.dev/yoohey/articles/ime-terminal-stress
+
 ## ライセンス
 
 MIT License（[LICENSE](LICENSE)）
